@@ -114,16 +114,33 @@ test.describe("Pages", () => {
       await expect(progressBar).toBeVisible();
     });
 
-    test("clicking a lesson button updates localStorage", async ({ page }) => {
+    test("clicking a lesson button updates progress immediately", async ({ page }) => {
       await page
         .locator('button:has-text("#1")')
         .first()
         .click();
-      const progress = await page.evaluate(() => {
-        const raw = localStorage.getItem("learn-openclaw-progress");
-        return raw ? JSON.parse(raw) : [];
-      });
-      expect(progress).toContainEqual("01-installation");
+      // UI should update instantly without reload
+      await expect(page.locator("text=1/17 lessons completed")).toBeVisible();
+      // Check icon changed to CheckCircle
+      const checkIcon = page
+        .locator('button:has-text("#1")')
+        .first()
+        .locator("svg.lucide-circle-check");
+      await expect(checkIcon).toBeVisible();
+    });
+
+    test("clicking again uncompletes lesson", async ({ page }) => {
+      await page
+        .locator('button:has-text("#1")')
+        .first()
+        .click();
+      await expect(page.locator("text=1/17 lessons completed")).toBeVisible();
+
+      await page
+        .locator('button:has-text("#1")')
+        .first()
+        .click();
+      await expect(page.locator("text=0/17 lessons completed")).toBeVisible();
     });
 
     test("has 17 lesson rows", async ({ page }) => {
@@ -138,12 +155,11 @@ test.describe("Pages", () => {
       await expect(lessonButtons).toHaveCount(17);
     });
 
-    test("progress reflects completed lesson after reload", async ({ page }) => {
+    test("progress persists after reload", async ({ page }) => {
       await page
         .locator('button:has-text("#1")')
         .first()
         .click();
-      // Reload to re-read localStorage via useMemo
       await page.reload();
       await expect(page.locator("text=1/17 lessons completed")).toBeVisible();
     });

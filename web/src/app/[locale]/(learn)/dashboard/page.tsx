@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Trophy, Target, Clock, CheckCircle2 } from "lucide-react";
 import { WEEKS, LESSON_META, LESSON_ORDER, type Locale } from "@/lib/constants";
@@ -30,7 +30,20 @@ function toggleComplete(slug: string) {
 export default function DashboardPage() {
   const { locale } = useI18n();
 
-  const completed = useMemo(() => getCompleted(), []);
+  const [completed, setCompleted] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    setCompleted(getCompleted());
+  }, []);
+
+  const toggle = useCallback((slug: string) => {
+    setCompleted((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) next.delete(slug);
+      else next.add(slug);
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify([...next]));
+      return next;
+    });
+  }, []);
 
   const totalLessons = LESSON_ORDER.length;
   const completedCount = completed.size;
@@ -121,7 +134,7 @@ export default function DashboardPage() {
                   return (
                     <button
                       key={slug}
-                      onClick={() => toggleComplete(slug)}
+                      onClick={() => toggle(slug)}
                       className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-left hover:bg-[var(--bg-secondary)] transition-colors"
                     >
                       {isComplete ? (

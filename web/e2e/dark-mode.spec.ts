@@ -2,7 +2,6 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Dark mode", () => {
   test.beforeEach(async ({ page }) => {
-    // Clear any stored theme preference
     await page.goto("/en");
     await page.evaluate(() => {
       localStorage.removeItem("theme");
@@ -37,13 +36,19 @@ test.describe("Dark mode", () => {
     await expect(page.locator("html")).toHaveClass(/dark/);
   });
 
-  test("dark toggle button exists with Moon and Sun SVGs", async ({ page }) => {
+  test("Moon icon visible in light mode", async ({ page }) => {
     await page.goto("/en");
-    const toggleBtn = page.locator('button[title="Toggle dark mode"]');
-    await expect(toggleBtn).toBeVisible();
-    // Both Moon and Sun SVGs exist in the DOM (one hidden, one visible)
-    await expect(toggleBtn.locator(".lucide-moon")).toHaveCount(1);
-    await expect(toggleBtn.locator(".lucide-sun")).toHaveCount(1);
+    await expect(
+      page.locator('button[title="Toggle dark mode"] .lucide-moon')
+    ).toBeVisible();
+  });
+
+  test("Sun icon visible in dark mode", async ({ page }) => {
+    await page.goto("/en");
+    await page.click('button[title="Toggle dark mode"]');
+    await expect(
+      page.locator('button[title="Toggle dark mode"] .lucide-sun')
+    ).toBeVisible();
   });
 
   test("localStorage stores theme value", async ({ page }) => {
