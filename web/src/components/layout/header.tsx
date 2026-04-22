@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Sun, Moon, Globe } from "lucide-react";
+import { BookOpen, Sun, Moon, Globe, Github } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import type { Locale } from "@/lib/constants";
@@ -54,6 +54,15 @@ export function Header() {
               <Globe size={14} />
               {otherLocale.toUpperCase()}
             </Link>
+            <a
+              href="https://github.com/caleb-lu/learn-openclaw"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 rounded-md px-2 py-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors"
+              title="GitHub"
+            >
+              <Github size={16} />
+            </a>
           </div>
         </nav>
       </div>
