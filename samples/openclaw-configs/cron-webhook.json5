@@ -1,0 +1,28 @@
+{
+  name: "automated-assistant",
+  model: { provider: "openai", model: "gpt-4o" },
+  channels: [{ type: "cli", enabled: true }],
+  automation: [
+    {
+      name: "morning-briefing",
+      trigger: { type: "cron", expression: "0 8 * * 1-5" },
+      action: { type: "chat", message: "Give me my morning briefing", channel: "cli" },
+    },
+    {
+      name: "github-pr-review",
+      trigger: { type: "webhook", path: "/webhook/github", method: "POST" },
+      action: { type: "skill", skill: "github-pr-review" },
+    },
+    {
+      name: "weekly-review",
+      trigger: { type: "cron", expression: "0 18 * * 5" },
+      action: { type: "chat", message: "Summarize my accomplishments this week", channel: "cli" },
+    },
+  ],
+  gateway: {
+    webhook: {
+      enabled: true,
+      port: 8080,
+    },
+  },
+}

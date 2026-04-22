@@ -1,0 +1,52 @@
+{
+  "id": "04-first-conversation",
+  "title": "Your First Conversation",
+  "description": "Start an interactive CLI chat session, send your first message, inspect the raw response, and save the conversation as a named session.",
+  "initialState": {
+    "chatStarted": false,
+    "firstMessageSent": false,
+    "responseChecked": false,
+    "sessionSaved": false
+  },
+  "steps": [
+    {
+      "instruction": "Start the interactive CLI chat by running the openclaw chat command.",
+      "action": "The terminal runs `openclaw chat --workspace my-agent` which opens a REPL-style prompt displaying the agent's name and a blinking cursor.",
+      "expectedOutput": "The prompt shows `Clawby> ` (or `openclaw> `) and is ready to accept input. A banner prints the workspace name and available commands (/help, /quit).",
+      "nextState": {
+        "chatStarted": true
+      }
+    },
+    {
+      "instruction": "Type your first message, for example \"Hello, can you help me learn OpenClaw?\", and press Enter.",
+      "action": "The message is serialized into the agent's prompt stack, sent to the configured LLM, and streamed back token-by-token to the terminal.",
+      "expectedOutput": "The agent responds in real time, introducing itself and acknowledging the request. The response references the agent's identity and offers a structured learning path.",
+      "nextState": {
+        "chatStarted": true,
+        "firstMessageSent": true
+      }
+    },
+    {
+      "instruction": "Inspect the raw response metadata to see token usage, model, and latency.",
+      "action": "The user types `/meta` at the prompt. The CLI prints a metadata block containing the model name, prompt tokens, completion tokens, total latency, and finish reason.",
+      "expectedOutput": "A table is printed with fields: `model: gpt-4o`, `prompt_tokens: 342`, `completion_tokens: 87`, `latency_ms: 1240`, `finish_reason: stop`.",
+      "nextState": {
+        "chatStarted": true,
+        "firstMessageSent": true,
+        "responseChecked": true
+      }
+    },
+    {
+      "instruction": "Save the current conversation as a named session for later retrieval.",
+      "action": "The user types `/save getting-started` which serializes the message history to a JSON session file under `.openclaw/sessions/`.",
+      "expectedOutput": "The CLI prints `Session saved: getting-started (2 messages)`. Running `openclaw session list` later shows `getting-started` with a timestamp and message count.",
+      "nextState": {
+        "chatStarted": true,
+        "firstMessageSent": true,
+        "responseChecked": true,
+        "sessionSaved": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! You have completed your first conversation with Clawby, inspected the response metadata, and saved the session. You can resume it anytime with `openclaw chat --resume getting-started`."
+}

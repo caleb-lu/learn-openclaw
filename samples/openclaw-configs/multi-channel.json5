@@ -1,0 +1,15 @@
+{
+  name: "multi-channel-bot",
+  model: {
+    provider: "openai",
+    model: "gpt-4o",
+  },
+  channels: [
+    { type: "telegram", enabled: true, config: { botToken: "${TELEGRAM_BOT_TOKEN}" } },
+    { type: "discord", enabled: true, config: { webhookUrl: "${DISCORD_WEBHOOK_URL}" } },
+    { type: "slack", enabled: true, config: { botToken: "${SLACK_BOT_TOKEN}", appToken: "${SLACK_APP_TOKEN}" } },
+    { type: "webchat", enabled: true, config: { port: 3000 } },
+    { type: "line", enabled: true, config: { channelToken: "${LINE_TOKEN}", channelSecret: "${LINE_SECRET}" } },
+    { type: "whatsapp", enabled: true, config: { phoneNumberId: "${WA_PHONE_ID}", accessToken: "${WA_TOKEN}" } },
+  ],
+}

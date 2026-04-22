@@ -1,0 +1,12 @@
+{
+  name: "social-media-post",
+  trigger: {
+    type: "cron",
+    expression: "0 10 * * 1,3,5",
+  },
+  action: {
+    type: "skill",
+    skill: "social-media-poster",
+    message: "Post the scheduled content to my connected social media channels",
+  },
+}

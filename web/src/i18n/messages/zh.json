@@ -1,0 +1,52 @@
+{
+  "site": {
+    "title": "学习 OpenClaw",
+    "subtitle": "全栈 AI 助手实战营",
+    "description": "4 周从部署到自动化，全面掌握 OpenClaw 平台"
+  },
+  "nav": {
+    "home": "首页",
+    "timeline": "时间线",
+    "playground": "实验室",
+    "dashboard": "进度看板",
+    "prevLesson": "上一课",
+    "nextLesson": "下一课"
+  },
+  "home": {
+    "hero": "构建你的 24/7 个人 AI 助手",
+    "heroSub": "覆盖 OpenClaw 完整平台的动手实战营 — 从部署到智能自动化",
+    "getStarted": "开始学习",
+    "viewTimeline": "查看时间线",
+    "learningPath": "学习路径",
+    "architecture": "架构概览"
+  },
+  "tabs": {
+    "learn": "学习",
+    "simulate": "模拟",
+    "code": "代码",
+    "playground": "实验",
+    "deepDive": "深入"
+  },
+  "week": {
+    "week": "第",
+    "week1": "部署与配置",
+    "week2": "渠道与路由",
+    "week3": "智能与记忆",
+    "week4": "自动化与进阶"
+  },
+  "gateway": {
+    "disconnected": "连接 Gateway 以启用实时功能",
+    "connected": "Gateway 已连接",
+    "connecting": "正在连接 Gateway..."
+  },
+  "progress": {
+    "completed": "已完成",
+    "remaining": "剩余",
+    "lessons": "课"
+  },
+  "lesson": {
+    "duration": "时长",
+    "objectives": "学习目标",
+    "prerequisites": "前置知识"
+  }
+}

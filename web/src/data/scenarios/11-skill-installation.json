@@ -1,0 +1,52 @@
+{
+  "id": "11-skill-installation",
+  "title": "Installing Skills from ClawHub",
+  "description": "Browse the ClawHub registry, install a community skill, configure its trigger conditions, and test that the skill activates correctly.",
+  "initialState": {
+    "hubBrowsed": false,
+    "skillInstalled": false,
+    "triggerConfigured": false,
+    "skillTested": false
+  },
+  "steps": [
+    {
+      "instruction": "Browse the ClawHub registry to find available skills.",
+      "action": "The terminal runs `openclaw hub search` which queries the registry and displays a list of skills with name, description, author, and install count.",
+      "expectedOutput": "A table of skills is printed. Each row shows: name (e.g. `web-search`), description, author, version, and downloads. At least 5 skills are listed.",
+      "nextState": {
+        "hubBrowsed": true
+      }
+    },
+    {
+      "instruction": "Install the `web-search` skill from ClawHub.",
+      "action": "The terminal runs `openclaw hub install web-search` which downloads the skill package, extracts it to `.openclaw/skills/web-search/`, and registers it in the skill manifest.",
+      "expectedOutput": "The terminal prints `Installing web-search v1.2.0...`, `Downloaded 4 files`, `Skill registered successfully`. `openclaw skill list` shows `web-search` as `installed`.",
+      "nextState": {
+        "hubBrowsed": true,
+        "skillInstalled": true
+      }
+    },
+    {
+      "instruction": "Configure the trigger so the skill activates when a user asks a question that requires web search.",
+      "action": "The skill's trigger is set via `openclaw skill configure web-search --trigger \"intent:web_search\" --auto true`. This enables automatic activation based on intent detection.",
+      "expectedOutput": "`openclaw skill show web-search` displays `trigger: intent:web_search`, `auto: true`, and `status: active`.",
+      "nextState": {
+        "hubBrowsed": true,
+        "skillInstalled": true,
+        "triggerConfigured": true
+      }
+    },
+    {
+      "instruction": "Test the skill by sending a message that should trigger a web search.",
+      "action": "The user sends `What is the current price of Bitcoin?` The intent detector recognizes a web search need and activates the `web-search` skill before passing context to the LLM.",
+      "expectedOutput": "The Gateway log shows `Skill activated: web-search (intent:web_search)`. The agent responds with current Bitcoin price data sourced from the web, not from its training data.",
+      "nextState": {
+        "hubBrowsed": true,
+        "skillInstalled": true,
+        "triggerConfigured": true,
+        "skillTested": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! You have browsed ClawHub, installed the web-search skill, configured automatic triggering, and verified it activates on relevant queries. Your agent can now search the web."
+}

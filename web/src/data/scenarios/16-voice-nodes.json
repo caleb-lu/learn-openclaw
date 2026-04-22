@@ -1,0 +1,52 @@
+{
+  "id": "16-voice-nodes",
+  "title": "Voice Nodes",
+  "description": "Enable the voice processing pipeline, configure a wake word, test speech-to-text transcription, and test text-to-speech response generation.",
+  "initialState": {
+    "voiceEnabled": false,
+    "wakeWordConfigured": false,
+    "sttTested": false,
+    "ttsTested": false
+  },
+  "steps": [
+    {
+      "instruction": "Enable the voice processing module in the configuration.",
+      "action": "The configuration is updated with `voice.enabled: true`, `voice.stt.engine: \"whisper\"`, `voice.tts.engine: \"openai\"`, and `voice.inputFormat: \"wav\"`.",
+      "expectedOutput": "`openclaw config show voice` prints the enabled voice config with STT and TTS engines. The Gateway log shows `Voice module initialized (STT: whisper, TTS: openai)`.",
+      "nextState": {
+        "voiceEnabled": true
+      }
+    },
+    {
+      "instruction": "Configure a custom wake word that activates voice mode.",
+      "action": "The terminal runs `openclaw voice wake-word --set \"hey clawby\" --sensitivity 0.8` which trains a lightweight wake-word detector on the provided phrase.",
+      "expectedOutput": "`Wake word set: \"hey clawby\" (sensitivity: 0.8)`. A test utterance of the wake word triggers `Wake word detected!` in the logs.",
+      "nextState": {
+        "voiceEnabled": true,
+        "wakeWordConfigured": true
+      }
+    },
+    {
+      "instruction": "Test the speech-to-text pipeline by sending an audio file for transcription.",
+      "action": "The terminal runs `openclaw voice stt --input test-audio.wav` which sends the WAV file through the Whisper model and returns the transcribed text.",
+      "expectedOutput": "The transcription is printed: `\"What is the weather like today?\"` with a confidence score of `0.94`. Processing time is displayed.",
+      "nextState": {
+        "voiceEnabled": true,
+        "wakeWordConfigured": true,
+        "sttTested": true
+      }
+    },
+    {
+      "instruction": "Test the text-to-speech pipeline by generating an audio response from an agent reply.",
+      "action": "The user sends a text message. The agent replies, and the TTS engine converts the response to audio. The terminal runs `openclaw voice tts --text \"The weather is sunny and 22 degrees.\" --output reply.mp3`.",
+      "expectedOutput": "An `reply.mp3` file is generated. The terminal prints `TTS generated: reply.mp3 (2.1s, 32KB)`. Playing the file produces a natural-sounding voice reading the response.",
+      "nextState": {
+        "voiceEnabled": true,
+        "wakeWordConfigured": true,
+        "sttTested": true,
+        "ttsTested": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! The voice pipeline is fully operational. You can speak to your agent, have it transcribe your words, process them, and respond with synthesized speech."
+}

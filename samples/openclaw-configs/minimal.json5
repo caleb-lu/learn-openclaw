@@ -1,0 +1,13 @@
+{
+  name: "my-assistant",
+  model: {
+    provider: "openai",
+    model: "gpt-4o",
+  },
+  channels: [
+    {
+      type: "cli",
+      enabled: true,
+    },
+  ],
+}

@@ -1,0 +1,12 @@
+{
+  name: "learning-flashcard",
+  trigger: {
+    type: "cron",
+    expression: "0 */2 * * *",
+  },
+  action: {
+    type: "chat",
+    message: "Quiz me with flashcards on my current study topics using spaced repetition",
+    channel: "cli",
+  },
+}

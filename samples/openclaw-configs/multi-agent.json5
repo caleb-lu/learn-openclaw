@@ -1,0 +1,45 @@
+{
+  name: "multi-agent-system",
+  model: {
+    provider: "openai",
+    model: "gpt-4o",
+  },
+  agents: [
+    {
+      name: "coder",
+      workspace: "./workspaces/coder",
+      channels: ["cli", "slack"],
+      description: "Programming and development assistant",
+      skills: ["github", "code-review", "debug"],
+    },
+    {
+      name: "assistant",
+      workspace: "./workspaces/assistant",
+      channels: ["telegram", "webchat"],
+      description: "Personal life assistant",
+      skills: ["weather", "calendar", "reminder"],
+    },
+    {
+      name: "creative",
+      workspace: "./workspaces/basic",
+      channels: ["discord"],
+      description: "Creative writing and brainstorming",
+    },
+  ],
+  routing: {
+    rules: [
+      {
+        channel: "slack",
+        agent: "coder",
+      },
+      {
+        channel: "telegram",
+        agent: "assistant",
+      },
+      {
+        channel: "discord",
+        agent: "creative",
+      },
+    ],
+  },
+}

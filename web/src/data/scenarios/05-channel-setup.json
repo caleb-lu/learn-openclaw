@@ -1,0 +1,65 @@
+{
+  "id": "05-channel-setup",
+  "title": "Channel Setup (Telegram)",
+  "description": "Obtain a Telegram bot token, configure the channel in OpenClaw, start the Gateway, send a test message, and verify the end-to-end connection.",
+  "initialState": {
+    "botToken": null,
+    "channelConfigured": false,
+    "gatewayRunning": false,
+    "testMessageSent": false,
+    "connectionVerified": false
+  },
+  "steps": [
+    {
+      "instruction": "Create a new Telegram bot via @BotFather and copy the API token.",
+      "action": "A placeholder step simulates the BotFather interaction. The user enters the token into the simulation environment variable `TELEGRAM_BOT_TOKEN`.",
+      "expectedOutput": "The environment variable `TELEGRAM_BOT_TOKEN` is set to a string matching the pattern `\\d{9,10}:[a-zA-Z0-9_-]{35}`.",
+      "nextState": {
+        "botToken": "env:TELEGRAM_BOT_TOKEN"
+      }
+    },
+    {
+      "instruction": "Add the Telegram channel configuration to `openclaw.json5`.",
+      "action": "The channels array is updated with a Telegram entry: `{\"type\":\"telegram\",\"name\":\"telegram-bot\",\"token\":\"$TELEGRAM_BOT_TOKEN\",\"allowedUsers\":[\"*\"],\"enabled\":true}`.",
+      "expectedOutput": "`openclaw config show channels` prints the new channel with type `telegram`, name `telegram-bot`, and `enabled: true`.",
+      "nextState": {
+        "botToken": "env:TELEGRAM_BOT_TOKEN",
+        "channelConfigured": true
+      }
+    },
+    {
+      "instruction": "Start the Gateway so it begins listening for messages on the configured channels.",
+      "action": "The terminal runs `openclaw gateway start` which initializes the message bus, connects to Telegram's long-polling API, and starts the HTTP server.",
+      "expectedOutput": "The log prints `Gateway started on port 3000`, `Connected to Telegram (polling)`, and `Channels active: telegram-bot`.",
+      "nextState": {
+        "botToken": "env:TELEGRAM_BOT_TOKEN",
+        "channelConfigured": true,
+        "gatewayRunning": true
+      }
+    },
+    {
+      "instruction": "Send a test message to your Telegram bot, for example \"Hello from OpenClaw!\".",
+      "action": "The Telegram channel adapter receives the incoming update, passes it through the routing engine, and forwards it to the agent's workspace prompt.",
+      "expectedOutput": "The Gateway log shows `Incoming message from user @testuser: \"Hello from OpenClaw!\"` followed by `Dispatching to workspace my-agent`.",
+      "nextState": {
+        "botToken": "env:TELEGRAM_BOT_TOKEN",
+        "channelConfigured": true,
+        "gatewayRunning": true,
+        "testMessageSent": true
+      }
+    },
+    {
+      "instruction": "Verify that the bot replied in Telegram and check the Gateway logs for confirmation.",
+      "action": "The Gateway log is inspected. It shows the agent's response was sent back through the Telegram adapter with a `200 OK` from the Telegram API.",
+      "expectedOutput": "The Telegram chat displays the bot's reply. The Gateway log prints `Reply sent to @testuser (chat_id: 123456789) - 200 OK - 340ms`.",
+      "nextState": {
+        "botToken": "env:TELEGRAM_BOT_TOKEN",
+        "channelConfigured": true,
+        "gatewayRunning": true,
+        "testMessageSent": true,
+        "connectionVerified": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! Your Telegram channel is live. Messages flow from Telegram through the Gateway to the agent and back. You can now chat with Clawby from your phone."
+}

@@ -1,0 +1,12 @@
+{
+  name: "backup-reminder",
+  trigger: {
+    type: "cron",
+    expression: "0 23 * * *",
+  },
+  action: {
+    type: "chat",
+    message: "Remind me to back up my important data and check that recent backups completed successfully",
+    channel: "cli",
+  },
+}

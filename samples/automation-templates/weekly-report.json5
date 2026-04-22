@@ -1,0 +1,12 @@
+{
+  name: "weekly-report",
+  trigger: {
+    type: "cron",
+    expression: "0 17 * * 5",
+  },
+  action: {
+    type: "chat",
+    message: "Generate a weekly progress report summarizing completed tasks, open items, and accomplishments",
+    channel: "cli",
+  },
+}

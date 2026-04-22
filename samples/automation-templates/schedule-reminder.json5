@@ -1,0 +1,12 @@
+{
+  name: "schedule-reminder",
+  trigger: {
+    type: "cron",
+    expression: "*/30 * * * *",
+  },
+  action: {
+    type: "chat",
+    message: "Check my upcoming events for the next 30 minutes and remind me of any meetings or tasks",
+    channel: "cli",
+  },
+}

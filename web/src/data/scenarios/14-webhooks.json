@@ -1,0 +1,52 @@
+{
+  "id": "14-webhooks",
+  "title": "Webhooks",
+  "description": "Create a webhook endpoint, secure it with signature verification, test it with curl, and process the incoming payload.",
+  "initialState": {
+    "endpointCreated": false,
+    "securitySet": false,
+    "tested": false,
+    "responseHandled": false
+  },
+  "steps": [
+    {
+      "instruction": "Create a new webhook endpoint that receives POST requests at `/webhooks/incoming`.",
+      "action": "The terminal runs `openclaw webhook create --path \"/webhooks/incoming\" --name \"external-trigger\"` which registers the endpoint in the Gateway.",
+      "expectedOutput": "`Webhook created: external-trigger at /webhooks/incoming`. `openclaw webhook list` shows the new endpoint with a generated URL.",
+      "nextState": {
+        "endpointCreated": true
+      }
+    },
+    {
+      "instruction": "Set up HMAC signature verification to secure the webhook endpoint.",
+      "action": "The terminal runs `openclaw webhook secure external-trigger --algo hmac-sha256 --secret \"$WEBHOOK_SECRET\"` which enables signature checking on incoming requests.",
+      "expectedOutput": "`Security enabled: hmac-sha256`. The webhook details now show `signature: hmac-sha256` and `secret: env:WEBHOOK_SECRET`.",
+      "nextState": {
+        "endpointCreated": true,
+        "securitySet": true
+      }
+    },
+    {
+      "instruction": "Test the webhook by sending a signed curl request with a sample payload.",
+      "action": "The terminal runs `curl -X POST http://localhost:3000/webhooks/incoming -H \"Content-Type: application/json\" -H \"X-Signature: <computed>\" -d '{\"event\":\"user.signup\",\"name\":\"Alice\"}'`.",
+      "expectedOutput": "The Gateway logs `Webhook received: external-trigger` and validates the signature. The HTTP response is `200 OK` with `{\"status\":\"accepted\",\"event\":\"user.signup\"}`.",
+      "nextState": {
+        "endpointCreated": true,
+        "securitySet": true,
+        "tested": true
+      }
+    },
+    {
+      "instruction": "Handle the webhook payload by configuring an automation that processes incoming events.",
+      "action": "An automation rule is added: `{\"trigger\":\"webhook:external-trigger\",\"condition\":\"event == 'user.signup'\",\"action\":\"agent:invoke\",\"prompt\":\"Welcome {{name}} to our platform!\"}`.",
+      "expectedOutput": "After re-sending the curl request, the Gateway log shows the automation matched and the agent was invoked. The agent's welcome message is logged.",
+      "nextState": {
+        "endpointCreated": true,
+        "securitySet": true,
+        "tested": true,
+        "responseHandled": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! Your webhook endpoint is live and secured with HMAC signatures. External services can now trigger agent actions by sending signed POST requests."
+}

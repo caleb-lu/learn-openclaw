@@ -1,0 +1,88 @@
+{
+  name: "full-assistant",
+  version: "1.0.0",
+  model: {
+    provider: "openai",
+    model: "gpt-4o",
+    temperature: 0.7,
+    maxTokens: 4096,
+    systemPrompt: "You are a helpful AI assistant.",
+  },
+  channels: [
+    { type: "cli", enabled: true },
+    {
+      type: "telegram",
+      enabled: true,
+      config: {
+        botToken: "${TELEGRAM_BOT_TOKEN}",
+        allowedUsers: ["user1"],
+      },
+    },
+    {
+      type: "discord",
+      enabled: true,
+      config: {
+        webhookUrl: "${DISCORD_WEBHOOK_URL}",
+      },
+    },
+    {
+      type: "slack",
+      enabled: true,
+      config: {
+        botToken: "${SLACK_BOT_TOKEN}",
+        appToken: "${SLACK_APP_TOKEN}",
+      },
+    },
+    {
+      type: "webchat",
+      enabled: true,
+      config: {
+        port: 3000,
+      },
+    },
+  ],
+  agents: [
+    {
+      name: "work",
+      workspace: "./workspaces/coder",
+      channels: ["cli", "slack"],
+      model: {
+        provider: "openai",
+        model: "gpt-4o",
+      },
+    },
+    {
+      name: "personal",
+      workspace: "./workspaces/assistant",
+      channels: ["telegram", "webchat"],
+    },
+  ],
+  memory: {
+    enabled: true,
+    maxEntries: 1000,
+    autoRecall: true,
+  },
+  skills: {
+    autoInstall: false,
+    directory: "./skills",
+  },
+  automation: [
+    {
+      name: "daily-summary",
+      trigger: {
+        type: "cron",
+        expression: "0 9 * * *",
+      },
+      action: {
+        type: "chat",
+        message: "Create a daily summary of my tasks and schedule",
+        channel: "telegram",
+      },
+    },
+  ],
+  gateway: {
+    host: "127.0.0.1",
+    port: 18789,
+    websocket: true,
+  },
+}

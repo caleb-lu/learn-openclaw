@@ -1,0 +1,52 @@
+{
+  "id": "06-multi-channel",
+  "title": "Multi-Channel Setup",
+  "description": "Configure OpenClaw to listen on multiple channels simultaneously, set per-channel options, start them all, and verify parallel message handling.",
+  "initialState": {
+    "channelsConfigured": 0,
+    "perChannelOptions": false,
+    "allChannelsStarted": false,
+    "parallelMessagingVerified": false
+  },
+  "steps": [
+    {
+      "instruction": "Add Telegram, Discord, and a local CLI channel to the `channels` array in `openclaw.json5`.",
+      "action": "Three channel objects are appended: `{\"type\":\"telegram\",\"name\":\"tg\"}`, `{\"type\":\"discord\",\"name\":\"discord\"}`, `{\"type\":\"cli\",\"name\":\"local\"}`.",
+      "expectedOutput": "`openclaw config show channels` lists three entries with types `telegram`, `discord`, and `cli`, all with `enabled: true`.",
+      "nextState": {
+        "channelsConfigured": 3
+      }
+    },
+    {
+      "instruction": "Configure per-channel options such as allowed users, rate limits, and custom prefixes.",
+      "action": "Each channel object is updated: Telegram gets `allowedUsers`, Discord gets `rateLimitPerMinute: 30` and `commandPrefix: \"!\"`, CLI gets `historySize: 100`.",
+      "expectedOutput": "`openclaw config show channels --verbose` prints each channel with its unique options. Discord shows the `!` prefix and rate limit; Telegram shows allowed users.",
+      "nextState": {
+        "channelsConfigured": 3,
+        "perChannelOptions": true
+      }
+    },
+    {
+      "instruction": "Start the Gateway with all channels enabled.",
+      "action": "The terminal runs `openclaw gateway start --all`. The Gateway initializes adapters for Telegram (long-polling), Discord (gateway websocket), and CLI (stdin REPL).",
+      "expectedOutput": "The log prints three lines: `Telegram adapter connected`, `Discord gateway connected (shard 0)`, `CLI adapter ready`. A summary shows `3 channels active`.",
+      "nextState": {
+        "channelsConfigured": 3,
+        "perChannelOptions": true,
+        "allChannelsStarted": true
+      }
+    },
+    {
+      "instruction": "Send messages from Telegram and Discord at the same time and verify both receive responses.",
+      "action": "Two simulated incoming messages arrive concurrently: one from Telegram user `@alice` and one from Discord user `bob#1234`. The Gateway dispatches both to the agent.",
+      "expectedOutput": "Both users receive replies within 2 seconds. The Gateway log shows interleaved dispatch entries confirming parallel processing: `Dispatching msg from @alice`, `Dispatching msg from bob#1234`, `Reply sent to @alice`, `Reply sent to bob#1234`.",
+      "nextState": {
+        "channelsConfigured": 3,
+        "perChannelOptions": true,
+        "allChannelsStarted": true,
+        "parallelMessagingVerified": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! OpenClaw is now listening on Telegram, Discord, and CLI simultaneously. Per-channel options are applied and parallel messages are handled without conflict."
+}

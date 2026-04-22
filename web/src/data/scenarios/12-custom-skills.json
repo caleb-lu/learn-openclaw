@@ -1,0 +1,65 @@
+{
+  "id": "12-custom-skills",
+  "title": "Building Custom Skills",
+  "description": "Create a SKILL.md definition file, add YAML frontmatter, define trigger patterns, implement the skill logic, and test and publish the skill.",
+  "initialState": {
+    "skillFileCreated": false,
+    "frontmatterAdded": false,
+    "triggersDefined": false,
+    "logicAdded": false,
+    "skillPublished": false
+  },
+  "steps": [
+    {
+      "instruction": "Create a new `SKILL.md` file for a custom `sentiment-analysis` skill.",
+      "action": "The terminal runs `openclaw skill create sentiment-analysis` which scaffolds a `SKILL.md` file in `.openclaw/skills/sentiment-analysis/` with a basic template.",
+      "expectedOutput": "The file is created. `cat SKILL.md` shows a template with placeholder sections for name, description, triggers, and logic.",
+      "nextState": {
+        "skillFileCreated": true
+      }
+    },
+    {
+      "instruction": "Add YAML frontmatter with metadata: name, version, author, description, and required permissions.",
+      "action": "The top of SKILL.md is updated with YAML frontmatter: `name: sentiment-analysis`, `version: 0.1.0`, `author: you`, `description: Analyzes text sentiment`, `permissions: [\"text_input\"]`.",
+      "expectedOutput": "`openclaw skill validate sentiment-analysis` parses the frontmatter and prints `Frontmatter valid: name, version, author, description, permissions`.",
+      "nextState": {
+        "skillFileCreated": true,
+        "frontmatterAdded": true
+      }
+    },
+    {
+      "instruction": "Define trigger patterns that activate the skill when users ask for sentiment analysis.",
+      "action": "A `triggers` section is added to SKILL.md with patterns: `\"analyze the sentiment of\"`, `\"what's the tone\"`, `\"is this positive or negative\"`.",
+      "expectedOutput": "`openclaw skill show sentiment-analysis --triggers` lists the three patterns. A test with `analyze the sentiment of this text` matches the first trigger.",
+      "nextState": {
+        "skillFileCreated": true,
+        "frontmatterAdded": true,
+        "triggersDefined": true
+      }
+    },
+    {
+      "instruction": "Add the core logic section that instructs the agent how to perform sentiment analysis.",
+      "action": "A `logic` markdown section is written with step-by-step instructions: extract the text, classify as positive/negative/neutral, provide a confidence score, and format the output.",
+      "expectedOutput": "The SKILL.md file now contains a detailed logic section with numbered steps. `openclaw skill validate sentiment-analysis` reports `Logic section: present (5 steps)`.",
+      "nextState": {
+        "skillFileCreated": true,
+        "frontmatterAdded": true,
+        "triggersDefined": true,
+        "logicAdded": true
+      }
+    },
+    {
+      "instruction": "Test the skill locally and then publish it to ClawHub.",
+      "action": "The user sends `analyze the sentiment of: I love using OpenClaw!` in chat. The skill activates and returns a sentiment analysis. Then `openclaw hub publish sentiment-analysis` uploads it.",
+      "expectedOutput": "The agent responds with `Sentiment: Positive (confidence: 0.95)`. Publishing prints `Published sentiment-analysis v0.1.0 to ClawHub` with a skill URL.",
+      "nextState": {
+        "skillFileCreated": true,
+        "frontmatterAdded": true,
+        "triggersDefined": true,
+        "logicAdded": true,
+        "skillPublished": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! You built a custom skill from scratch, tested it locally, and published it to ClawHub. Other users can now install your sentiment-analysis skill."
+}

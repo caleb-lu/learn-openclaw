@@ -1,0 +1,12 @@
+{
+  name: "github-pr-review",
+  trigger: {
+    type: "webhook",
+    path: "/webhook/github",
+    method: "POST",
+  },
+  action: {
+    type: "skill",
+    skill: "github-pr-review",
+  },
+}

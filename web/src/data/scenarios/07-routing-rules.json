@@ -1,0 +1,65 @@
+{
+  "id": "07-routing-rules",
+  "title": "Routing Rules",
+  "description": "Inspect the binding table, add pattern-based route rules, test pattern matching, set rule priorities, and verify that messages are routed to the correct workspace or agent.",
+  "initialState": {
+    "bindingTableInspected": false,
+    "ruleAdded": false,
+    "patternTested": false,
+    "prioritySet": false,
+    "routingVerified": false
+  },
+  "steps": [
+    {
+      "instruction": "View the current binding table to understand how messages are routed by default.",
+      "action": "The terminal runs `openclaw routing table` which displays the default route entries in a table format: channel, pattern, target workspace, priority.",
+      "expectedOutput": "A table is printed with the default `* -> my-agent` catch-all rule at priority 0. The columns are `channel | pattern | target | priority`.",
+      "nextState": {
+        "bindingTableInspected": true
+      }
+    },
+    {
+      "instruction": "Add a route rule that sends messages starting with `/code` to a `developer` workspace.",
+      "action": "The terminal runs `openclaw routing add --pattern \"/code*\" --target developer --channel telegram` which inserts a new entry into the binding table.",
+      "expectedOutput": "`Route added: /code* -> developer (telegram)`. `openclaw routing table` now shows the new rule alongside the default catch-all.",
+      "nextState": {
+        "bindingTableInspected": true,
+        "ruleAdded": true
+      }
+    },
+    {
+      "instruction": "Test the pattern match by sending `/code write a Python hello world` to the Telegram channel.",
+      "action": "The incoming message is evaluated against the binding table. The `/code` prefix matches the new rule, and the message is dispatched to the `developer` workspace instead of the default.",
+      "expectedOutput": "The Gateway log shows `Route matched: /code* -> developer`. The agent in the `developer` workspace responds with Python code.",
+      "nextState": {
+        "bindingTableInspected": true,
+        "ruleAdded": true,
+        "patternTested": true
+      }
+    },
+    {
+      "instruction": "Set the priority of the `/code` rule to 10 so it takes precedence over other rules.",
+      "action": "The terminal runs `openclaw routing priority --pattern \"/code*\" --set 10`. The binding table is reordered so higher-priority rules are evaluated first.",
+      "expectedOutput": "`Priority updated: /code* -> 10`. The routing table now lists the `/code*` rule at priority 10 above any lower-priority rules.",
+      "nextState": {
+        "bindingTableInspected": true,
+        "ruleAdded": true,
+        "patternTested": true,
+        "prioritySet": true
+      }
+    },
+    {
+      "instruction": "Verify routing by sending a regular message and a `/code` message, confirming each goes to the correct workspace.",
+      "action": "Two messages are sent: `Hello` (no prefix) and `/code explain closures`. The first matches the catch-all and goes to `my-agent`; the second matches the high-priority rule and goes to `developer`.",
+      "expectedOutput": "The Gateway log shows `Route matched: * -> my-agent` for `Hello` and `Route matched: /code* -> developer` for the second message. Both agents respond correctly.",
+      "nextState": {
+        "bindingTableInspected": true,
+        "ruleAdded": true,
+        "patternTested": true,
+        "prioritySet": true,
+        "routingVerified": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! Your routing table is configured with pattern-based rules and priorities. Messages are now intelligently dispatched to the correct workspace based on their content."
+}

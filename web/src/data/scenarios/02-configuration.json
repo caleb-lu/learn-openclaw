@@ -1,0 +1,65 @@
+{
+  "id": "02-configuration",
+  "title": "Configuring OpenClaw",
+  "description": "Learn how to create the main configuration file, set model parameters, add a messaging channel, define an automation rule, and validate the result.",
+  "initialState": {
+    "configFile": null,
+    "modelSet": false,
+    "channelAdded": false,
+    "automationAdded": false,
+    "configValid": false
+  },
+  "steps": [
+    {
+      "instruction": "Create the main configuration file `openclaw.json5` inside the mounted config volume.",
+      "action": "The terminal runs `docker exec openclaw openclaw init config` which scaffolds a default `openclaw.json5` with comments for every section.",
+      "expectedOutput": "The file is created at `/root/.openclaw/openclaw.json5`. The terminal echoes `Config file created at /root/.openclaw/openclaw.json5`.",
+      "nextState": {
+        "configFile": "openclaw.json5"
+      }
+    },
+    {
+      "instruction": "Set the default LLM model by editing the `model` block in the configuration.",
+      "action": "The configuration file is updated so that `model.provider` is `\"openai\"` and `model.defaultModel` is `\"gpt-4o\"`. The API key is sourced from the `OPENAI_API_KEY` environment variable.",
+      "expectedOutput": "After saving, running `openclaw config show model` prints `{\"provider\":\"openai\",\"defaultModel\":\"gpt-4o\",\"apiKeySource\":\"env\"}`.",
+      "nextState": {
+        "configFile": "openclaw.json5",
+        "modelSet": true
+      }
+    },
+    {
+      "instruction": "Add a Telegram channel under the `channels` array in the configuration.",
+      "action": "A new channel object is appended with `type: \"telegram\"`, `name: \"my-bot\"`, and `token: \"$TELEGRAM_BOT_TOKEN\"`. The config is written to disk.",
+      "expectedOutput": "`openclaw config show channels` now lists one entry: `[{\"type\":\"telegram\",\"name\":\"my-bot\",\"enabled\":true}]`.",
+      "nextState": {
+        "configFile": "openclaw.json5",
+        "modelSet": true,
+        "channelAdded": true
+      }
+    },
+    {
+      "instruction": "Add an automation rule that greets new users who send their first message.",
+      "action": "An entry is added to the `automations` array: `{\"trigger\":\"firstMessage\",\"action\":\"reply\",\"template\":\"Welcome to OpenClaw, {{user.name}}!\"}`.",
+      "expectedOutput": "`openclaw config show automations` prints the new rule with trigger `firstMessage` and action `reply`.",
+      "nextState": {
+        "configFile": "openclaw.json5",
+        "modelSet": true,
+        "channelAdded": true,
+        "automationAdded": true
+      }
+    },
+    {
+      "instruction": "Validate the entire configuration to catch schema errors before restarting.",
+      "action": "The terminal runs `openclaw config validate` which parses the JSON5, resolves environment variables, and checks every field against the schema.",
+      "expectedOutput": "Validation passes with `Config OK - 0 errors, 0 warnings`. A summary lists the active sections: model, channels (1), automations (1).",
+      "nextState": {
+        "configFile": "openclaw.json5",
+        "modelSet": true,
+        "channelAdded": true,
+        "automationAdded": true,
+        "configValid": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! Your `openclaw.json5` is valid and contains a model definition, a Telegram channel, and a first-message automation. Restart the Gateway to activate the changes."
+}

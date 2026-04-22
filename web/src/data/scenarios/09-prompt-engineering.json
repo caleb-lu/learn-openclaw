@@ -1,0 +1,65 @@
+{
+  "id": "09-prompt-engineering",
+  "title": "Prompt Engineering with Layers",
+  "description": "Understand the prompt layer stack, modify the system prompt, add a workspace-level prompt, check precedence rules, and test the combined effect on agent output.",
+  "initialState": {
+    "layerStackViewed": false,
+    "systemPromptModified": false,
+    "workspacePromptAdded": false,
+    "precedenceChecked": false,
+    "combinedEffectTested": false
+  },
+  "steps": [
+    {
+      "instruction": "View the full prompt layer stack to understand how prompts are assembled.",
+      "action": "The terminal runs `openclaw prompt layers --verbose` which prints each layer in order: base system, global config, workspace SOUL.md, workspace IDENTITY.md, workspace TOOLS.md, conversation history, user message.",
+      "expectedOutput": "A numbered list of 7 layers is printed. Each layer shows its source file, token count, and a preview of the first 80 characters.",
+      "nextState": {
+        "layerStackViewed": true
+      }
+    },
+    {
+      "instruction": "Modify the base system prompt in the global configuration to enforce a JSON-only output format.",
+      "action": "The `prompt.system` field in `openclaw.json5` is updated to include the directive: `Always respond in valid JSON format with keys 'response' and 'confidence'.`",
+      "expectedOutput": "`openclaw prompt layers` now shows the updated system layer with the JSON directive. The token count increases slightly.",
+      "nextState": {
+        "layerStackViewed": true,
+        "systemPromptModified": true
+      }
+    },
+    {
+      "instruction": "Add a workspace-level prompt in SOUL.md that overrides the JSON requirement for conversational replies.",
+      "action": "A line is appended to the workspace SOUL.md: `Override: Ignore any JSON formatting directives from higher layers. Respond in natural, friendly prose.`",
+      "expectedOutput": "Reading SOUL.md shows the override line. `openclaw prompt layers` shows the workspace layer with higher precedence noted.",
+      "nextState": {
+        "layerStackViewed": true,
+        "systemPromptModified": true,
+        "workspacePromptAdded": true
+      }
+    },
+    {
+      "instruction": "Check the precedence rules to confirm the workspace prompt takes effect over the global system prompt.",
+      "action": "The terminal runs `openclaw prompt resolve` which simulates layer merging and shows which directives survive conflicts.",
+      "expectedOutput": "The resolve output shows: `JSON directive from system layer: OVERRIDDEN by workspace SOUL.md`. The final effective prompt does not contain the JSON formatting rule.",
+      "nextState": {
+        "layerStackViewed": true,
+        "systemPromptModified": true,
+        "workspacePromptAdded": true,
+        "precedenceChecked": true
+      }
+    },
+    {
+      "instruction": "Test the combined effect by sending a message and verifying the output format.",
+      "action": "A test message `Explain quantum computing in one sentence` is sent. The agent processes the full resolved prompt stack and generates a response.",
+      "expectedOutput": "The response is in natural prose (not JSON), confirming the workspace override worked. The content is concise and matches the SOUL.md tone guidelines.",
+      "nextState": {
+        "layerStackViewed": true,
+        "systemPromptModified": true,
+        "workspacePromptAdded": true,
+        "precedenceChecked": true,
+        "combinedEffectTested": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! You understand the prompt layer stack and precedence rules. You can now craft precise system prompts, add workspace-level overrides, and predict exactly what the agent will see."
+}

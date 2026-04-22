@@ -1,0 +1,52 @@
+{
+  "id": "15-canvas-a2ui",
+  "title": "Canvas (Agent-to-UI)",
+  "description": "Create a canvas template, define UI components, have the agent push content to the canvas, and render it inside a messaging channel.",
+  "initialState": {
+    "templateCreated": false,
+    "componentsDefined": false,
+    "contentPushed": false,
+    "renderedInChannel": false
+  },
+  "steps": [
+    {
+      "instruction": "Create a new canvas template file in the workspace.",
+      "action": "A file `canvases/weather-card.canvas.json` is created with a template definition that includes a root container, header, body, and footer section.",
+      "expectedOutput": "`openclaw canvas list` shows `weather-card` with status `template`. The file contains a valid JSON schema with four named slots.",
+      "nextState": {
+        "templateCreated": true
+      }
+    },
+    {
+      "instruction": "Define UI components for the canvas: a title, an icon, a data table, and a footer link.",
+      "action": "The canvas template is updated with component definitions: `title` (text), `icon` (image URL), `dataTable` (key-value pairs), and `footerLink` (action URL).",
+      "expectedOutput": "`openclaw canvas show weather-card` renders a component tree: `root > header > title, icon`, `root > body > dataTable`, `root > footer > footerLink`. Four components are listed.",
+      "nextState": {
+        "templateCreated": true,
+        "componentsDefined": true
+      }
+    },
+    {
+      "instruction": "Have the agent push data into the canvas by requesting a weather report.",
+      "action": "The user sends `Show me the weather for Tokyo` in chat. The agent calls the `canvas:push` tool with the `weather-card` template and fills in the component slots with live data.",
+      "expectedOutput": "The agent logs `Canvas pushed: weather-card (4 slots filled)`. The canvas data includes Tokyo's temperature, condition icon, and a forecast link.",
+      "nextState": {
+        "templateCreated": true,
+        "componentsDefined": true,
+        "contentPushed": true
+      }
+    },
+    {
+      "instruction": "Verify that the canvas renders correctly in the Telegram channel as an inline UI card.",
+      "action": "The Gateway serializes the canvas data into a Telegram-compatible format (using inline keyboard buttons and formatted text) and sends it to the user's chat.",
+      "expectedOutput": "The Telegram chat displays a formatted card with the weather title, an icon, temperature data in a clean layout, and a clickable footer link. The response is visually distinct from a plain text message.",
+      "nextState": {
+        "templateCreated": true,
+        "componentsDefined": true,
+        "contentPushed": true,
+        "renderedInChannel": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! You created a canvas template, defined reusable components, pushed live data from the agent, and rendered it as a rich UI card in Telegram. Your agent can now deliver structured visual content."
+}

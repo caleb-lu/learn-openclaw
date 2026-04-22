@@ -1,0 +1,79 @@
+{
+  "id": "17-capstone",
+  "title": "Capstone: Full System Deployment",
+  "description": "Bring everything together by setting up a complete configuration, workspace, multiple channels, automations, scheduled tasks, and verifying the entire system works end to end.",
+  "initialState": {
+    "fullConfig": false,
+    "workspaceConfigured": false,
+    "channelsEnabled": false,
+    "automationsAdded": false,
+    "deployed": false,
+    "verified": false
+  },
+  "steps": [
+    {
+      "instruction": "Set up the full `openclaw.json5` configuration with all modules enabled: model, memory, voice, scheduler, and webhooks.",
+      "action": "A comprehensive configuration file is written with sections for model (gpt-4o), memory (sqlite), voice (whisper + openai TTS), scheduler, and webhook security. All modules set to `enabled: true`.",
+      "expectedOutput": "`openclaw config validate` passes with `Config OK - 0 errors, 0 warnings`. The summary shows all 6 modules active.",
+      "nextState": {
+        "fullConfig": true
+      }
+    },
+    {
+      "instruction": "Configure the workspace with SOUL.md, IDENTITY.md, TOOLS.md, and install the web-search skill.",
+      "action": "The `my-agent` workspace is populated with all three markdown files. The `web-search` skill is installed from ClawHub and configured with automatic triggering.",
+      "expectedOutput": "`openclaw workspace status my-agent` shows `SOUL.md: present`, `IDENTITY.md: present`, `TOOLS.md: present`, `Skills: web-search (active)`.",
+      "nextState": {
+        "fullConfig": true,
+        "workspaceConfigured": true
+      }
+    },
+    {
+      "instruction": "Enable Telegram, Discord, and CLI channels with per-channel options and routing rules.",
+      "action": "Three channels are added with unique settings. A routing rule sends `/code*` to a `developer` workspace and everything else to `my-agent`.",
+      "expectedOutput": "`openclaw channel list` shows 3 channels. `openclaw routing table` shows 2 rules with priorities. All channels report `status: ready`.",
+      "nextState": {
+        "fullConfig": true,
+        "workspaceConfigured": true,
+        "channelsEnabled": true
+      }
+    },
+    {
+      "instruction": "Add automations: a welcome message for new users, a webhook handler for signups, and a daily summary task.",
+      "action": "Three automations are configured: firstMessage welcome, webhook signup handler, and a scheduled daily-summary cron task at 9 AM UTC.",
+      "expectedOutput": "`openclaw automation list` shows 2 event-driven automations. `openclaw scheduler list` shows the daily-summary task with its cron expression.",
+      "nextState": {
+        "fullConfig": true,
+        "workspaceConfigured": true,
+        "channelsEnabled": true,
+        "automationsAdded": true
+      }
+    },
+    {
+      "instruction": "Deploy the system by starting the Gateway with all components.",
+      "action": "The terminal runs `openclaw gateway start --all` which initializes the message bus, connects all channels, loads skills, starts the scheduler, and opens webhook endpoints.",
+      "expectedOutput": "The startup log prints a checklist: `Model: connected`, `Memory: loaded (3 facts)`, `Voice: initialized`, `Channels: 3 active`, `Scheduler: 1 task`, `Webhooks: 1 endpoint`, `Skills: 1 active`. Final line: `System ready.`",
+      "nextState": {
+        "fullConfig": true,
+        "workspaceConfigured": true,
+        "channelsEnabled": true,
+        "automationsAdded": true,
+        "deployed": true
+      }
+    },
+    {
+      "instruction": "Verify the entire system by running the built-in health check and sending test messages through each channel.",
+      "action": "The terminal runs `openclaw health` which tests all subsystems. Then test messages are sent via Telegram, Discord, and CLI. The webhook is pinged with curl. The scheduler is triggered manually.",
+      "expectedOutput": "`openclaw health` returns all green: `model: OK`, `memory: OK`, `channels: OK (3/3)`, `scheduler: OK`, `webhooks: OK`, `skills: OK`. All test messages receive correct responses. The webhook returns 200 OK. The scheduler task completes successfully.",
+      "nextState": {
+        "fullConfig": true,
+        "workspaceConfigured": true,
+        "channelsEnabled": true,
+        "automationsAdded": true,
+        "deployed": true,
+        "verified": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! You have completed the full OpenClaw capstone. Your system is fully deployed with multiple channels, routing, memory, voice, webhooks, scheduled tasks, and skills all working together. You are now an OpenClaw operator."
+}

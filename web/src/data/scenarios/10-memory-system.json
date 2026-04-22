@@ -1,0 +1,65 @@
+{
+  "id": "10-memory-system",
+  "title": "Memory System",
+  "description": "Enable the long-term memory module, store facts, have a conversation that references them, trigger recall, and verify persistence across sessions.",
+  "initialState": {
+    "memoryEnabled": false,
+    "factStored": false,
+    "conversationWithRecall": false,
+    "recallTriggered": false,
+    "persistenceVerified": false
+  },
+  "steps": [
+    {
+      "instruction": "Enable the long-term memory module in `openclaw.json5`.",
+      "action": "The configuration is updated: `memory.enabled: true`, `memory.backend: \"sqlite\"`, `memory.maxTokens: 2000`.",
+      "expectedOutput": "`openclaw config show memory` prints `{\"enabled\":true,\"backend\":\"sqlite\",\"maxTokens\":2000}`. A `memory.db` file is created automatically.",
+      "nextState": {
+        "memoryEnabled": true
+      }
+    },
+    {
+      "instruction": "Store a fact directly into memory, for example the user's name and preferred language.",
+      "action": "The terminal runs `openclaw memory store --key \"user.name\" --value \"Alice\"` and `openclaw memory store --key \"user.language\" --value \"English\"`.",
+      "expectedOutput": "Both commands print `Stored: user.name = Alice` and `Stored: user.language = English`. `openclaw memory list` shows two entries.",
+      "nextState": {
+        "memoryEnabled": true,
+        "factStored": true
+      }
+    },
+    {
+      "instruction": "Have a conversation where the agent naturally uses the stored memory without being explicitly prompted.",
+      "action": "The user sends `What is my name?` in the CLI chat. The agent's prompt stack includes a memory context section with the stored facts.",
+      "expectedOutput": "The agent responds with `Your name is Alice.` without the user having mentioned their name in this conversation.",
+      "nextState": {
+        "memoryEnabled": true,
+        "factStored": true,
+        "conversationWithRecall": true
+      }
+    },
+    {
+      "instruction": "Trigger an automatic memory save by providing new information during conversation.",
+      "action": "The user sends `I just adopted a dog named Rex.` The agent detects new factual information and automatically stores it via the memory module.",
+      "expectedOutput": "The agent acknowledges the information. `openclaw memory list` now shows three entries, including `user.pet = \"dog named Rex\"`.",
+      "nextState": {
+        "memoryEnabled": true,
+        "factStored": true,
+        "conversationWithRecall": true,
+        "recallTriggered": true
+      }
+    },
+    {
+      "instruction": "Verify memory persistence by starting a new session and querying previously stored facts.",
+      "action": "A new chat session is started with `openclaw chat --new`. The user asks `What do you know about me?` The memory module loads all stored facts into the prompt.",
+      "expectedOutput": "The agent responds with a summary: `You are Alice, you speak English, and you have a dog named Rex.` This confirms facts persist across sessions.",
+      "nextState": {
+        "memoryEnabled": true,
+        "factStored": true,
+        "conversationWithRecall": true,
+        "recallTriggered": true,
+        "persistenceVerified": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! The memory system is active. Facts are stored, automatically extracted from conversations, recalled on demand, and persist across chat sessions."
+}

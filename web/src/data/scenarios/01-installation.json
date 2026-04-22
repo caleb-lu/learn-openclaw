@@ -1,0 +1,65 @@
+{
+  "id": "01-installation",
+  "title": "Installing OpenClaw",
+  "description": "Walk through installing Docker, pulling the OpenClaw image, running the container, and verifying the CLI and Gateway are operational.",
+  "initialState": {
+    "dockerInstalled": false,
+    "imagePulled": false,
+    "containerRunning": false,
+    "cliAvailable": false,
+    "gatewayStatus": "unknown"
+  },
+  "steps": [
+    {
+      "instruction": "Verify that Docker is installed and running on your system.",
+      "action": "The terminal runs `docker --version` and `docker info` to confirm the Docker daemon is accessible.",
+      "expectedOutput": "Docker version 24.x.x (or later) is displayed, and `docker info` returns a summary of containers, images, and storage driver without errors.",
+      "nextState": {
+        "dockerInstalled": true
+      }
+    },
+    {
+      "instruction": "Pull the official OpenClaw Docker image from the registry.",
+      "action": "The terminal runs `docker pull ghcr.io/openclaw/openclaw:latest` and streams the layer download progress.",
+      "expectedOutput": "Each layer is downloaded and extracted. The final line reads `Status: Downloaded newer image for ghcr.io/openclaw/openclaw:latest`.",
+      "nextState": {
+        "dockerInstalled": true,
+        "imagePulled": true
+      }
+    },
+    {
+      "instruction": "Run the OpenClaw container in detached mode with the default configuration volume mounted.",
+      "action": "The terminal runs `docker run -d --name openclaw -v openclaw-config:/root/.openclaw -p 3000:3000 ghcr.io/openclaw/openclaw:latest`.",
+      "expectedOutput": "A long container ID is printed and the prompt returns immediately. `docker ps` confirms the container status is `Up` with port 3000 mapped.",
+      "nextState": {
+        "dockerInstalled": true,
+        "imagePulled": true,
+        "containerRunning": true
+      }
+    },
+    {
+      "instruction": "Verify the OpenClaw CLI is accessible inside the container.",
+      "action": "The terminal runs `docker exec openclaw openclaw --version` to invoke the built-in CLI.",
+      "expectedOutput": "The CLI prints its semantic version, e.g. `openclaw v0.14.2`, confirming the binary is executable.",
+      "nextState": {
+        "dockerInstalled": true,
+        "imagePulled": true,
+        "containerRunning": true,
+        "cliAvailable": true
+      }
+    },
+    {
+      "instruction": "Check the Gateway status to ensure the message bus and HTTP server are healthy.",
+      "action": "The terminal runs `docker exec openclaw openclaw gateway status` which queries the internal health endpoint.",
+      "expectedOutput": "A JSON object is returned with `\"status\": \"healthy\"`, uptime in seconds, and a list of active listeners (e.g. `http`, `websocket`).",
+      "nextState": {
+        "dockerInstalled": true,
+        "imagePulled": true,
+        "containerRunning": true,
+        "cliAvailable": true,
+        "gatewayStatus": "healthy"
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! OpenClaw is fully installed. The Docker container is running, the CLI responds, and the Gateway reports healthy. You are ready to configure your first agent."
+}

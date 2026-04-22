@@ -1,0 +1,52 @@
+{
+  "id": "08-multi-agent",
+  "title": "Multi-Agent Setup",
+  "description": "Define multiple agents with distinct workspaces, configure inter-agent routing, and test seamless agent switching within a single conversation.",
+  "initialState": {
+    "agentConfigsCreated": false,
+    "workspacesSet": false,
+    "routingConfigured": false,
+    "agentSwitchTested": false
+  },
+  "steps": [
+    {
+      "instruction": "Create a second agent configuration file for a specialized assistant.",
+      "action": "A new file `agents/coder.json5` is created with `name: \"CoderAgent\"`, `model.defaultModel: \"gpt-4o\"`, and `workspace: \"coder\"`.",
+      "expectedOutput": "`openclaw agent list` now shows two agents: `default` and `coder`. Each displays its name, model, and workspace.",
+      "nextState": {
+        "agentConfigsCreated": true
+      }
+    },
+    {
+      "instruction": "Set up a dedicated workspace for the coder agent with specialized SOUL.md and TOOLS.md.",
+      "action": "The `coder` workspace is created with a SOUL.md that defines a technical, concise tone and a TOOLS.md that enables `code_eval`, `file_write`, and `shell_exec`.",
+      "expectedOutput": "`ls /root/.openclaw/workspaces/coder/` shows `SOUL.md` and `TOOLS.md`. Reading SOUL.md confirms the technical personality.",
+      "nextState": {
+        "agentConfigsCreated": true,
+        "workspacesSet": true
+      }
+    },
+    {
+      "instruction": "Configure routing so that messages mentioning code or programming are forwarded to the coder agent.",
+      "action": "A routing rule is added: `openclaw routing add --pattern \"*code*\" --target coder --priority 5`. Another rule sends everything else to the default agent.",
+      "expectedOutput": "`openclaw routing table` shows two rules: `*code* -> coder (priority 5)` and `* -> default (priority 0)`.",
+      "nextState": {
+        "agentConfigsCreated": true,
+        "workspacesSet": true,
+        "routingConfigured": true
+      }
+    },
+    {
+      "instruction": "Test agent switching by sending a general question followed by a coding question in the same chat.",
+      "action": "Message 1: `What is OpenClaw?` routes to `default`. Message 2: `Write a code snippet for a REST API` routes to `coder`. The CLI maintains conversation context per agent.",
+      "expectedOutput": "The first response comes from the default agent with a conceptual explanation. The second response comes from CoderAgent with an actual code snippet. The Gateway log confirms each was routed to the correct agent.",
+      "nextState": {
+        "agentConfigsCreated": true,
+        "workspacesSet": true,
+        "routingConfigured": true,
+        "agentSwitchTested": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! You now have two agents running with distinct personalities and workspaces. Routing rules automatically select the right agent based on message content."
+}

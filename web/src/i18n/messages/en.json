@@ -1,0 +1,52 @@
+{
+  "site": {
+    "title": "Learn OpenClaw",
+    "subtitle": "Full-Stack AI Assistant Bootcamp",
+    "description": "Master OpenClaw from deployment to automation in 4 weeks"
+  },
+  "nav": {
+    "home": "Home",
+    "timeline": "Timeline",
+    "playground": "Playground",
+    "dashboard": "Dashboard",
+    "prevLesson": "Previous",
+    "nextLesson": "Next"
+  },
+  "home": {
+    "hero": "Build Your 24/7 Personal AI Assistant",
+    "heroSub": "A hands-on, interactive bootcamp covering the complete OpenClaw platform — from deployment to intelligent automation",
+    "getStarted": "Start Learning",
+    "viewTimeline": "View Timeline",
+    "learningPath": "Learning Path",
+    "architecture": "Architecture Overview"
+  },
+  "tabs": {
+    "learn": "Learn",
+    "simulate": "Simulate",
+    "code": "Code",
+    "playground": "Playground",
+    "deepDive": "Deep Dive"
+  },
+  "week": {
+    "week": "Week",
+    "week1": "Deployment & Configuration",
+    "week2": "Channels & Routing",
+    "week3": "Intelligence & Memory",
+    "week4": "Automation & Advanced"
+  },
+  "gateway": {
+    "disconnected": "Connect Gateway for live features",
+    "connected": "Gateway connected",
+    "connecting": "Connecting to Gateway..."
+  },
+  "progress": {
+    "completed": "Completed",
+    "remaining": "remaining",
+    "lessons": "lessons"
+  },
+  "lesson": {
+    "duration": "Duration",
+    "objectives": "Learning Objectives",
+    "prerequisites": "Prerequisites"
+  }
+}

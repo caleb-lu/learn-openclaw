@@ -1,0 +1,65 @@
+{
+  "id": "03-workspace",
+  "title": "Setting Up a Workspace",
+  "description": "Create a workspace directory structure with SOUL.md, IDENTITY.md, and TOOLS.md, then test that the agent's personality reflects the configuration.",
+  "initialState": {
+    "workspaceDir": null,
+    "soulWritten": false,
+    "identityWritten": false,
+    "toolsWritten": false,
+    "personalityTested": false
+  },
+  "steps": [
+    {
+      "instruction": "Create a new workspace directory for your agent inside the OpenClaw home.",
+      "action": "The terminal runs `docker exec openclaw mkdir -p /root/.openclaw/workspaces/my-agent` to scaffold the folder.",
+      "expectedOutput": "No errors are returned. `ls /root/.openclaw/workspaces/` confirms the `my-agent` directory exists.",
+      "nextState": {
+        "workspaceDir": "my-agent"
+      }
+    },
+    {
+      "instruction": "Write a `SOUL.md` file that defines the agent's core values, tone, and behavioral boundaries.",
+      "action": "A markdown file is created with sections: Core Values (helpful, concise, honest), Tone (friendly but professional), and Boundaries (no medical or legal advice).",
+      "expectedOutput": "`cat SOUL.md` prints the three sections with the agent's personality traits clearly documented.",
+      "nextState": {
+        "workspaceDir": "my-agent",
+        "soulWritten": true
+      }
+    },
+    {
+      "instruction": "Write an `IDENTITY.md` file that gives the agent a name, role, and background story.",
+      "action": "The file is created with fields: name `\"Clawby\"`, role `\"Personal AI Assistant\"`, and a short backstory about being built to help users learn OpenClaw.",
+      "expectedOutput": "`cat IDENTITY.md` displays the agent's name, role, and a two-sentence backstory.",
+      "nextState": {
+        "workspaceDir": "my-agent",
+        "soulWritten": true,
+        "identityWritten": true
+      }
+    },
+    {
+      "instruction": "Write a `TOOLS.md` file that lists the capabilities the agent can use and any restrictions.",
+      "action": "The file is created with a table of tools: `web_search`, `code_eval`, `file_read`, `file_write`. Each has a description and a `restricted` boolean.",
+      "expectedOutput": "`cat TOOLS.md` prints a markdown table with four tools, their descriptions, and restriction flags.",
+      "nextState": {
+        "workspaceDir": "my-agent",
+        "soulWritten": true,
+        "identityWritten": true,
+        "toolsWritten": true
+      }
+    },
+    {
+      "instruction": "Test the agent's personality by sending a message and checking whether it responds in character.",
+      "action": "The terminal runs `openclaw chat --workspace my-agent --message \"What is your name and what can you do?\"` which invokes the agent with the workspace loaded.",
+      "expectedOutput": "The agent responds introducing itself as \"Clawby\", mentions its role as a Personal AI Assistant, and lists the tools from TOOLS.md. The tone matches the SOUL.md guidelines.",
+      "nextState": {
+        "workspaceDir": "my-agent",
+        "soulWritten": true,
+        "identityWritten": true,
+        "toolsWritten": true,
+        "personalityTested": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! Your workspace `my-agent` is fully configured. Clawby has a soul, an identity, and a tool set. The personality test confirms it responds exactly as defined."
+}

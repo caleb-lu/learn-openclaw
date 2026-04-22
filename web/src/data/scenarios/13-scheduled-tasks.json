@@ -1,0 +1,52 @@
+{
+  "id": "13-scheduled-tasks",
+  "title": "Scheduled Tasks",
+  "description": "Add a cron-based scheduled task, set the cron expression, configure the action to perform, and verify that the task executes on schedule.",
+  "initialState": {
+    "taskAdded": false,
+    "cronSet": false,
+    "actionConfigured": false,
+    "executionVerified": false
+  },
+  "steps": [
+    {
+      "instruction": "Add a new scheduled task to the configuration using the CLI.",
+      "action": "The terminal runs `openclaw scheduler add --name \"daily-summary\"` which creates a task entry in `openclaw.json5` under the `scheduler.tasks` array.",
+      "expectedOutput": "`Task created: daily-summary (no schedule set)`. `openclaw scheduler list` shows the task with status `pending`.",
+      "nextState": {
+        "taskAdded": true
+      }
+    },
+    {
+      "instruction": "Set the cron expression so the task runs every day at 9:00 AM UTC.",
+      "action": "The terminal runs `openclaw scheduler set-cron daily-summary \"0 9 * * *\"` which updates the task's schedule field.",
+      "expectedOutput": "`Cron updated: daily-summary -> 0 9 * * * (daily at 09:00 UTC)`. The scheduler preview shows the next 3 run times.",
+      "nextState": {
+        "taskAdded": true,
+        "cronSet": true
+      }
+    },
+    {
+      "instruction": "Configure the action that the task should perform when triggered.",
+      "action": "The task action is set to invoke the agent with a prompt: `openclaw scheduler set-action daily-summary --prompt \"Generate a summary of yesterday's conversations and key insights.\"`.",
+      "expectedOutput": "`Action set: daily-summary -> agent:invoke`. `openclaw scheduler show daily-summary` prints the full task with cron expression, action type, and prompt template.",
+      "nextState": {
+        "taskAdded": true,
+        "cronSet": true,
+        "actionConfigured": true
+      }
+    },
+    {
+      "instruction": "Trigger a manual run of the task to verify it executes correctly before waiting for the schedule.",
+      "action": "The terminal runs `openclaw scheduler run daily-summary --now` which immediately invokes the task outside the normal schedule.",
+      "expectedOutput": "The scheduler log shows `Running daily-summary (manual trigger)`, the agent generates a conversation summary, and the result is printed. `Status: completed (2.3s)`.",
+      "nextState": {
+        "taskAdded": true,
+        "cronSet": true,
+        "actionConfigured": true,
+        "executionVerified": true
+      }
+    }
+  ],
+  "completionMessage": "Congratulations! Your scheduled task is configured and verified. The daily-summary task will automatically run every day at 9:00 AM UTC and generate conversation summaries."
+}
